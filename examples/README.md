@@ -2,13 +2,23 @@
 
 The `ballerinax/xero.bankfeeds` connector provides practical examples illustrating usage in various scenarios.
 
-[//]: # (TODO: Add examples)
-1. 
-2. 
+| Example | Description |
+|---------|-------------|
+| [`bank_feed_connection_lifecycle`](./bank_feed_connection_lifecycle/bank_feed_connection_lifecycle.md) | Connects a bank account to a Xero organisation as a bank feed, confirms it and lists every feed connection. |
+| [`deliver_daily_bank_statement`](./deliver_daily_bank_statement/deliver_daily_bank_statement.md) | Delivers one day's transactions to a feed connection as a statement and checks its delivery status. |
 
 ## Prerequisites
 
-[//]: # (TODO: Add prerequisites)
+1. Complete the [setup guide](../ballerina/README.md#setup-guide) to obtain a client ID, client secret, refresh token and tenant ID for a Xero app with the `bankfeeds` scope.
+
+2. For each example, create a `Config.toml` in the example directory with the required credentials and the example-specific values listed in its document:
+   ```toml
+   clientId = "<CLIENT_ID>"
+   clientSecret = "<CLIENT_SECRET>"
+   refreshToken = "<REFRESH_TOKEN>"
+   refreshUrl = "https://identity.xero.com/connect/token"
+   tenantId = "<TENANT_ID>"
+   ```
 
 ## Running an example
 
