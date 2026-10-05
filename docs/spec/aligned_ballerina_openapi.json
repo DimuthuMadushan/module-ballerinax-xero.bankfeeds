@@ -377,6 +377,7 @@
                     {
                         "name": "Xero-Application-Id",
                         "in": "header",
+                        "description": "Xero identifier of the application making the request",
                         "required": false,
                         "style": "simple",
                         "explode": false,
@@ -384,12 +385,12 @@
                             "type": "string",
                             "default": "00000000-0000-0000-0000-0000000010000"
                         },
-                        "x-ballerina-name": "xeroApplicationId",
-                        "description": "Xero identifier of the application making the request"
+                        "x-ballerina-name": "xeroApplicationId"
                     },
                     {
                         "name": "Xero-User-Id",
                         "in": "header",
+                        "description": "Xero identifier of the user on whose behalf the request is made",
                         "required": false,
                         "style": "simple",
                         "explode": false,
@@ -397,8 +398,7 @@
                             "type": "string",
                             "default": "00000000-0000-0000-0000-0000030000000"
                         },
-                        "x-ballerina-name": "xeroUserId",
-                        "description": "Xero identifier of the user on whose behalf the request is made"
+                        "x-ballerina-name": "xeroUserId"
                     }
                 ],
                 "responses": {
@@ -793,12 +793,12 @@
                         "example": "079a88ea-276d-41fb-a1f1-366ef3e22921"
                     },
                     "country": {
+                        "description": "Country of the bank account, as an ISO-3166 alpha-2 country code",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/CountryCode"
                             }
-                        ],
-                        "description": "Country of the bank account, as an ISO-3166 alpha-2 country code"
+                        ]
                     },
                     "accountName": {
                         "maximum": 30,
@@ -816,12 +816,12 @@
                         ]
                     },
                     "currency": {
+                        "description": "Currency of the bank account, as an ISO-4217 currency code",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/CurrencyCode"
                             }
-                        ],
-                        "description": "Currency of the bank account, as an ISO-4217 currency code"
+                        ]
                     },
                     "id": {
                         "type": "string",
@@ -842,12 +842,12 @@
                         "example": "3809087654321500"
                     },
                     "error": {
+                        "description": "Details of why the feed connection request was rejected",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/Error"
                             }
-                        ],
-                        "description": "Details of why the feed connection request was rejected"
+                        ]
                     },
                     "status": {
                         "type": "string",
@@ -859,21 +859,21 @@
                         ]
                     }
                 },
+                "description": "A feed connection that links a financial institution account to a bank account in a Xero organisation",
                 "externalDocs": {
                     "url": "https://developer.xero.com/documentation/bank-feeds-api/feed-connections"
-                },
-                "description": "A feed connection that links a financial institution account to a bank account in a Xero organisation"
+                }
             },
             "Statement": {
                 "type": "object",
                 "properties": {
                     "statementLines": {
+                        "description": "Transaction lines of the statement",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/StatementLines"
                             }
-                        ],
-                        "description": "Transaction lines of the statement"
+                        ]
                     },
                     "endDate": {
                         "type": "string",
@@ -882,17 +882,17 @@
                         "example": "2018-07-27"
                     },
                     "endBalance": {
+                        "description": "Closing balance of the statement",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/EndBalance"
                             }
-                        ],
-                        "description": "Closing balance of the statement"
+                        ]
                     },
                     "statementLineCount": {
                         "type": "integer",
-                        "example": 1,
-                        "description": "Number of statement lines in the statement"
+                        "description": "Number of statement lines in the statement",
+                        "example": 1
                     },
                     "id": {
                         "type": "string",
@@ -913,19 +913,19 @@
                         "example": "2018-07-27"
                     },
                     "startBalance": {
+                        "description": "Opening balance of the statement",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/StartBalance"
                             }
-                        ],
-                        "description": "Opening balance of the statement"
+                        ]
                     },
                     "errors": {
                         "type": "array",
+                        "description": "Details of why the statement was rejected",
                         "items": {
                             "$ref": "#/components/schemas/Error"
-                        },
-                        "description": "Details of why the statement was rejected"
+                        }
                     },
                     "status": {
                         "type": "string",
@@ -945,18 +945,18 @@
                 "properties": {
                     "amount": {
                         "type": "number",
+                        "description": "decimal(19,4) unsigned closing balance amount",
                         "format": "double",
                         "example": 10.134,
-                        "x-is-money": true,
-                        "description": "decimal(19,4) unsigned closing balance amount"
+                        "x-is-money": true
                     },
                     "creditDebitIndicator": {
+                        "description": "Whether the closing balance is a credit or a debit, from the perspective of the customer",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/CreditDebitIndicator"
                             }
-                        ],
-                        "description": "Whether the closing balance is a credit or a debit, from the perspective of the customer"
+                        ]
                     }
                 },
                 "description": "The StartBalance plus all the Statement Line Amounts should be equal to the EndBalance Amount"
@@ -1023,12 +1023,12 @@
                         "x-is-money": true
                     },
                     "creditDebitIndicator": {
+                        "description": "Whether the opening balance is a credit or a debit, from the perspective of the customer",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/CreditDebitIndicator"
                             }
-                        ],
-                        "description": "Whether the opening balance is a credit or a debit, from the perspective of the customer"
+                        ]
                     }
                 },
                 "description": "The starting balance of the statement"
@@ -1278,12 +1278,12 @@
                         "example": "021"
                     },
                     "creditDebitIndicator": {
+                        "description": "Whether the transaction is a credit or a debit, from the perspective of the customer",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/CreditDebitIndicator"
                             }
-                        ],
-                        "description": "Whether the transaction is a credit or a debit, from the perspective of the customer"
+                        ]
                     },
                     "transactionId": {
                         "type": "string",
@@ -1303,32 +1303,32 @@
                 "type": "object",
                 "properties": {
                     "pagination": {
+                        "description": "Pagination details of the returned page of results",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/Pagination"
                             }
-                        ],
-                        "description": "Pagination details of the returned page of results"
+                        ]
                     },
                     "items": {
                         "type": "array",
+                        "description": "List of statements",
                         "items": {
                             "$ref": "#/components/schemas/Statement"
-                        },
-                        "description": "List of statements"
+                        }
                     }
                 },
+                "description": "A page of statements, or the statements submitted in a create request",
                 "externalDocs": {
                     "url": "https://developer.xero.com/documentation/bank-feeds-api/statements"
-                },
-                "description": "A page of statements, or the statements submitted in a create request"
+                }
             },
             "StatementLines": {
                 "type": "array",
+                "description": "The transaction lines of a statement",
                 "items": {
                     "$ref": "#/components/schemas/StatementLine"
-                },
-                "description": "The transaction lines of a statement"
+                }
             },
             "CountryCode": {
                 "type": "string",
@@ -1581,25 +1581,25 @@
                 "type": "object",
                 "properties": {
                     "pagination": {
+                        "description": "Pagination details of the returned page of results",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/Pagination"
                             }
-                        ],
-                        "description": "Pagination details of the returned page of results"
+                        ]
                     },
                     "items": {
                         "type": "array",
+                        "description": "List of feed connections",
                         "items": {
                             "$ref": "#/components/schemas/FeedConnection"
-                        },
-                        "description": "List of feed connections"
+                        }
                     }
                 },
+                "description": "A page of feed connections, or the feed connections submitted in a create or delete request",
                 "externalDocs": {
                     "url": "https://developer.xero.com/documentation/bank-feeds-api/feed-connections"
-                },
-                "description": "A page of feed connections, or the feed connections submitted in a create or delete request"
+                }
             }
         },
         "parameters": {

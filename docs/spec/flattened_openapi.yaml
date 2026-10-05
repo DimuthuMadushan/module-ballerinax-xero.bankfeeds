@@ -32,7 +32,7 @@ paths:
       - name: page
         in: query
         description: "Page number which specifies the set of records to retrieve.\
-          \ By default the number of the records per set is 10. Example - https://api.xero.com/bankfeeds.xro/1.0/FeedConnections?page=1\
+          \ By default the number of the records per set is 10. Example - https://api.xero.com/bankfeeds.xro/1.0/FeedConnections?page=2\
           \ to get the second set of the records. When page value is not a number\
           \ or a negative number, by default, the first set of records is returned."
         required: false
@@ -54,8 +54,7 @@ paths:
           example: 100
       responses:
         "202":
-          description: search results matching criteria returned with pagination and
-            items array
+          description: "A page of feed connections, with pagination details"
           content:
             application/json:
               schema:
@@ -91,7 +90,7 @@ paths:
     post:
       tags:
       - BankFeeds
-      summary: Create one or more new feed connection
+      summary: Creates one or more new feed connections
       description: "By passing in the FeedConnections array object in the body, you\
         \ can create one or more new feed connections"
       operationId: createFeedConnections
@@ -113,7 +112,7 @@ paths:
         required: true
       responses:
         "202":
-          description: success new feed connection(s)response
+          description: "The submitted feed connections, each with its status"
           content:
             application/json:
               schema:
@@ -149,7 +148,7 @@ paths:
     get:
       tags:
       - BankFeeds
-      summary: Retrieve single feed connection based on a unique id provided
+      summary: Retrieves a single feed connection by its unique ID
       description: "By passing in a FeedConnection Id options, you can search for\
         \ matching feed connections"
       operationId: getFeedConnection
@@ -165,8 +164,7 @@ paths:
           format: uuid
       responses:
         "200":
-          description: success returns a FeedConnection object matching the id in
-            response
+          description: The feed connection matching the given ID
           content:
             application/json:
               schema:
@@ -191,7 +189,7 @@ paths:
     post:
       tags:
       - BankFeeds
-      summary: Delete an existing feed connection
+      summary: Deletes one or more existing feed connections
       description: "By passing in FeedConnections array object in the body, you can\
         \ delete a feed connection."
       operationId: deleteFeedConnections
@@ -209,7 +207,8 @@ paths:
         required: true
       responses:
         "202":
-          description: Success response for deleted feed connection
+          description: "The feed connections submitted for deletion, each with its\
+            \ status"
           content:
             application/json:
               schema:
@@ -237,13 +236,16 @@ paths:
     get:
       tags:
       - BankFeeds
-      summary: Retrieve all statements
+      summary: Retrieves all statements
       description: "By passing in parameters, you can search for matching statements"
       operationId: getStatements
       parameters:
       - name: page
         in: query
-        description: unique id for single object
+        description: "Page number which specifies the set of records to retrieve.\
+          \ By default the number of the records per set is 10. Example - https://api.xero.com/bankfeeds.xro/1.0/Statements?page=2\
+          \ to get the second set of the records. When page value is not a number\
+          \ or a negative number, by default, the first set of records is returned."
         required: false
         style: form
         explode: true
@@ -263,6 +265,7 @@ paths:
           format: int32
       - name: Xero-Application-Id
         in: header
+        description: Xero identifier of the application making the request
         required: false
         style: simple
         explode: false
@@ -271,6 +274,7 @@ paths:
           default: 00000000-0000-0000-0000-0000000010000
       - name: Xero-User-Id
         in: header
+        description: Xero identifier of the user on whose behalf the request is made
         required: false
         style: simple
         explode: false
@@ -279,7 +283,7 @@ paths:
           default: 00000000-0000-0000-0000-0000030000000
       responses:
         "200":
-          description: success returns Statements array of objects response
+          description: "A page of statements, with pagination details"
           content:
             application/json:
               schema:
@@ -390,7 +394,7 @@ paths:
         required: true
       responses:
         "202":
-          description: Success returns Statements array of objects in response
+          description: "The submitted statements, each with its status"
           content:
             application/json:
               schema:
@@ -488,7 +492,7 @@ paths:
     get:
       tags:
       - BankFeeds
-      summary: Retrieve single statement based on unique id provided
+      summary: Retrieves a single statement by its unique ID
       description: "By passing in a statement id, you can search for matching statements"
       operationId: getStatement
       parameters:
@@ -503,7 +507,7 @@ paths:
           format: uuid
       responses:
         "200":
-          description: search results matching id for single statement
+          description: The statement matching the given ID
           content:
             application/json:
               schema:
@@ -534,11 +538,16 @@ components:
       type: object
       properties:
         pagination:
-          $ref: "#/components/schemas/Pagination"
+          description: Pagination details of the returned page of results
+          allOf:
+          - $ref: "#/components/schemas/Pagination"
         items:
           type: array
+          description: List of feed connections
           items:
             $ref: "#/components/schemas/FeedConnection"
+      description: "A page of feed connections, or the feed connections submitted\
+        \ in a create or delete request"
       externalDocs:
         url: https://developer.xero.com/documentation/bank-feeds-api/feed-connections
     FeedConnection:
@@ -586,9 +595,14 @@ components:
           - BANK
           - CREDITCARD
         currency:
-          $ref: "#/components/schemas/CurrencyCode"
+          description: "Currency of the bank account, as an ISO-4217 currency code"
+          allOf:
+          - $ref: "#/components/schemas/CurrencyCode"
         country:
-          $ref: "#/components/schemas/CountryCode"
+          description: "Country of the bank account, as an ISO-3166 alpha-2 country\
+            \ code"
+          allOf:
+          - $ref: "#/components/schemas/CountryCode"
         status:
           type: string
           description: the current status of the feed connection
@@ -597,18 +611,27 @@ components:
           - PENDING
           - REJECTED
         error:
-          $ref: "#/components/schemas/Error"
+          description: Details of why the feed connection request was rejected
+          allOf:
+          - $ref: "#/components/schemas/Error"
+      description: A feed connection that links a financial institution account to
+        a bank account in a Xero organisation
       externalDocs:
         url: https://developer.xero.com/documentation/bank-feeds-api/feed-connections
     Statements:
       type: object
       properties:
         pagination:
-          $ref: "#/components/schemas/Pagination"
+          description: Pagination details of the returned page of results
+          allOf:
+          - $ref: "#/components/schemas/Pagination"
         items:
           type: array
+          description: List of statements
           items:
             $ref: "#/components/schemas/Statement"
+      description: "A page of statements, or the statements submitted in a create\
+        \ request"
       externalDocs:
         url: https://developer.xero.com/documentation/bank-feeds-api/statements
     Pagination:
@@ -635,6 +658,7 @@ components:
           type: integer
           description: Number of items returned
           example: 2
+      description: Pagination details of the returned page of results
     Statement:
       type: object
       properties:
@@ -670,18 +694,28 @@ components:
           format: date
           example: 2018-07-27
         startBalance:
-          $ref: "#/components/schemas/StartBalance"
+          description: Opening balance of the statement
+          allOf:
+          - $ref: "#/components/schemas/StartBalance"
         endBalance:
-          $ref: "#/components/schemas/EndBalance"
+          description: Closing balance of the statement
+          allOf:
+          - $ref: "#/components/schemas/EndBalance"
         statementLines:
-          $ref: "#/components/schemas/StatementLines"
+          description: Transaction lines of the statement
+          allOf:
+          - $ref: "#/components/schemas/StatementLines"
         errors:
           type: array
+          description: Details of why the statement was rejected
           items:
             $ref: "#/components/schemas/Error"
         statementLineCount:
           type: integer
+          description: Number of statement lines in the statement
           example: 1
+      description: "A bank statement delivered to a feed connection, with its opening\
+        \ and closing balances and statement lines"
     StartBalance:
       type: object
       properties:
@@ -692,22 +726,30 @@ components:
           example: 9.0000
           x-is-money: true
         creditDebitIndicator:
-          $ref: "#/components/schemas/CreditDebitIndicator"
+          description: "Whether the opening balance is a credit or a debit, from the\
+            \ perspective of the customer"
+          allOf:
+          - $ref: "#/components/schemas/CreditDebitIndicator"
       description: The starting balance of the statement
     EndBalance:
       type: object
       properties:
         amount:
           type: number
+          description: "decimal(19,4) unsigned closing balance amount"
           format: double
           example: 10.1340
           x-is-money: true
         creditDebitIndicator:
-          $ref: "#/components/schemas/CreditDebitIndicator"
+          description: "Whether the closing balance is a credit or a debit, from the\
+            \ perspective of the customer"
+          allOf:
+          - $ref: "#/components/schemas/CreditDebitIndicator"
       description: The StartBalance plus all the Statement Line Amounts should be
         equal to the EndBalance Amount.
     StatementLines:
       type: array
+      description: The transaction lines of a statement
       items:
         $ref: "#/components/schemas/StatementLine"
     StatementLine:
@@ -731,7 +773,10 @@ components:
           example: 5.00
           x-is-money: true
         creditDebitIndicator:
-          $ref: "#/components/schemas/CreditDebitIndicator"
+          description: "Whether the transaction is a credit or a debit, from the perspective\
+            \ of the customer"
+          allOf:
+          - $ref: "#/components/schemas/CreditDebitIndicator"
         transactionId:
           type: string
           description: Financial institute's internal transaction identifier. If provided
@@ -1144,7 +1189,7 @@ components:
       - NG
       - NI
       - NL
-      - "false"
+      - "NO"
       - NP
       - NR
       - NU

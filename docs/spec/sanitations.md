@@ -9,12 +9,12 @@ This document records the sanitation done on top of the official OpenAPI specifi
 The OpenAPI specification is obtained from the [Xero Bank Feeds API 19.0.0 specification](https://github.com/wso2/api-specs/blob/main/openapi/xero/bankfeeds/19.0.0/openapi.yaml) (`openapi/xero/bankfeeds/19.0.0/openapi.yaml` in `api-specs`), which is Xero's own `xero_bankfeeds.yaml` from [XeroAPI/Xero-OpenAPI](https://github.com/XeroAPI/Xero-OpenAPI).
 These changes are done in order to improve the overall usability, and as workarounds for some known language limitations.
 
-`docs/spec/openapi.yaml` is the upstream file, unmodified. Every change below is applied to `docs/spec/aligned_ballerina_openapi.json`, after `bal openapi flatten` and `bal openapi align`. Apart from item 1, `flatten` and `align` made no structural changes to this specification: no server URL, path prefix, format, nullability or type changes.
+Items 1 and 3 to 7 are applied directly to `docs/spec/openapi.yaml`, so they survive every regeneration. Item 2 is a note on how the aligned YAML is converted to JSON, and item 8 is recorded in `ai-mappings.json`. Apart from the `NO` quoting in item 1, `flatten` and `align` made no structural changes to this specification: no server URL, path prefix, format, nullability or type changes.
 
-1. **Restored the `NO` (Norway) value of the `CountryCode` enum**
+1. **Quoted the `NO` (Norway) value of the `CountryCode` enum**
    **Original**: The `CountryCode` enum lists Norway as an unquoted `- NO`. YAML 1.1 reads an unquoted `NO` as the boolean `false`, and `bal openapi flatten` wrote it to the flattened specification as the string `"false"`.
-   **Updated**: The enum value is `"NO"` again, between `"NL"` and `"NP"`.
-   **Reason**: `CountryCode` is generated as a closed union of string literals, so with `"false"` in place of `"NO"` a feed connection whose `country` is Norway could neither be created nor read back. Re-apply this after every flatten until the upstream specification quotes the value.
+   **Updated**: The enum value is quoted, `- "NO"`, between `NL` and `NP`, so flatten keeps the string `"NO"`.
+   **Reason**: `CountryCode` is generated as a closed union of string literals, so with `"false"` in place of `"NO"` a feed connection whose `country` is Norway could neither be created nor read back.
 
 2. **Converted the aligned YAML to JSON without timestamp coercion**
    **Original**: The response examples contain unquoted dates (for example `startDate: 2019-08-01`).
@@ -29,7 +29,7 @@ These changes are done in order to improve the overall usability, and as workaro
 4. **Wrapped 11 bare `$ref` properties in `allOf`**
    **Original**: `FeedConnection.country`, `currency` and `error`, `Statement.statementLines`, `startBalance` and `endBalance`, the three `creditDebitIndicator` properties and the two `pagination` properties were a bare `$ref`.
    **Updated**: `allOf: [{$ref: ...}]` with a sibling `description`.
-   **Reason**: OpenAPI 3.0 ignores keys beside a bare `$ref`, so the description added in item 3 would otherwise be dropped from the generated field.
+   **Reason**: OpenAPI 3.0 ignores keys beside a bare `$ref`, and `bal openapi align` drops a `description` that sits beside one, so the description added in item 3 would otherwise be lost from the generated field.
 
 5. **Corrected the `page` query parameter descriptions**
    **Original**: The `page` parameter of `GET /Statements` read "unique id for single object", and both `page` parameters gave `?page=1` as the example for getting the second set of records.
