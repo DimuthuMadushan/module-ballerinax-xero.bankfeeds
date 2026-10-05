@@ -1,6 +1,6 @@
 # Deliver a daily bank statement
 
-This example turns one day's transactions from a core banking system into a Xero bank statement and delivers it to an existing feed connection. It works out the closing balance from the opening balance and the transactions, sends the statement with an idempotency key so a retry of the same day is safe, and checks the delivery status Xero reports. It then pages through the statements already delivered and counts those for the feed connection by status.
+This example turns one day's transactions from a core banking system into a Xero bank statement and delivers it to an existing feed connection. It first checks that no statement for that day has already been delivered, then works out the closing balance from the opening balance and the transactions, sends the statement with an idempotency key that protects an immediate retry of the same request, and checks the delivery status Xero reports. It then pages through the statements already delivered and counts those for the feed connection by status.
 
 ## Prerequisites
 
@@ -8,8 +8,7 @@ This example turns one day's transactions from a core banking system into a Xero
 - An active feed connection to deliver the statement to. The [bank feed connection lifecycle](../bank_feed_connection_lifecycle/bank_feed_connection_lifecycle.md) example creates one.
 - Push the connector to the local repository:
   ```bash
-  cd ../../ballerina
-  bal pack && bal push --repository=local
+  (cd ../../ballerina && bal pack && bal push --repository=local)
   ```
 - Create a `Config.toml` in this directory:
   ```toml

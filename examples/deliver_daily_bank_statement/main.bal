@@ -49,6 +49,17 @@ public function main() returns error? {
         auth: {clientId, clientSecret, refreshToken, refreshUrl}
     });
 
+    // An idempotency key only guards a retry of the identical request for a limited time, so a
+    // later rerun first checks whether this day's statement has already been delivered.
+    bankfeeds:Statement[] delivered = check statementsForFeed(xero);
+    foreach bankfeeds:Statement existing in delivered {
+        if existing.startDate == statementDate && existing.status != "REJECTED" {
+            io:println(string `Statement ${existing.id ?: ""} for ${statementDate} already exists `
+                + string `with status ${existing.status ?: "unknown"}; nothing to deliver`);
+            return;
+        }
+    }
+
     // Step 1: build the statement from the day's transactions.
     BankTransaction[] transactions = [
         {id: statementDate + "-0001", description: "Salary payment", payee: "Contoso Ltd", amount: 3200.00, transactionType: "Credit transfer"},
@@ -70,7 +81,8 @@ public function main() returns error? {
         });
     }
 
-    // Step 2: deliver the statement. The idempotency key makes a retry of the same day safe.
+    // Step 2: deliver the statement. Reusing the idempotency key for an immediate retry of this
+    // identical request stops Xero processing it twice.
     bankfeeds:Statements submitted = check xero->createStatements(
         {xeroTenantId: tenantId, idempotencyKey: string `${feedConnectionId}-${statementDate}`},
         {
@@ -104,8 +116,21 @@ public function main() returns error? {
         io:println("  " + describeErrors(statement.errors));
     }
 
-    // Step 4: summarise every statement delivered to this feed connection, one page at a time.
+    // Step 4: summarise every statement delivered to this feed connection.
     map<int> countsByStatus = {};
+    foreach bankfeeds:Statement item in check statementsForFeed(xero) {
+        string status = item.status ?: "UNKNOWN";
+        countsByStatus[status] = (countsByStatus[status] ?: 0) + 1;
+    }
+    io:println(string `Statements for feed connection ${feedConnectionId}:`);
+    foreach [string, int] [status, count] in countsByStatus.entries() {
+        io:println(string `  ${status}: ${count}`);
+    }
+}
+
+// Returns the statements delivered to the configured feed connection, reading one page at a time.
+function statementsForFeed(bankfeeds:Client xero) returns bankfeeds:Statement[]|error {
+    bankfeeds:Statement[] statements = [];
     int page = 1;
     while true {
         bankfeeds:Statements current = check xero->getStatements({xeroTenantId: tenantId},
@@ -113,8 +138,7 @@ public function main() returns error? {
         bankfeeds:Statement[] items = current.items ?: [];
         foreach bankfeeds:Statement item in items {
             if item.feedConnectionId == feedConnectionId {
-                string status = item.status ?: "UNKNOWN";
-                countsByStatus[status] = (countsByStatus[status] ?: 0) + 1;
+                statements.push(item);
             }
         }
         if items.length() < PAGE_SIZE {
@@ -122,10 +146,7 @@ public function main() returns error? {
         }
         page += 1;
     }
-    io:println(string `Statements for feed connection ${feedConnectionId}:`);
-    foreach [string, int] [status, count] in countsByStatus.entries() {
-        io:println(string `  ${status}: ${count}`);
-    }
+    return statements;
 }
 
 // Converts a signed balance to the unsigned amount and credit/debit indicator Xero expects.

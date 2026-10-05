@@ -38,6 +38,9 @@ final Client xero = check new ({
 // Returns a value unique to this test run, so live reruns never collide with an earlier fixture.
 isolated function runSuffix() returns string => time:utcNow()[0].toString();
 
+// Formats a UTC time as an ISO-8601 date, YYYY-MM-DD.
+isolated function isoDate(time:Utc utc) returns string => time:utcToString(utc).substring(0, 10);
+
 @test:Config {
     groups: ["live_tests", "mock_tests"]
 }
@@ -160,17 +163,21 @@ function testGetStatement() returns error? {
     groups: ["live_tests", "mock_tests"]
 }
 function testCreateStatements() returns error? {
+    // Xero rejects a start date older than one year, so the statement covers yesterday and today.
+    time:Utc now = time:utcNow();
+    string today = isoDate(now);
+    string yesterday = isoDate(time:utcAddSeconds(now, -86400));
     Statements response = check xero->createStatements({xeroTenantId: tenantId, idempotencyKey: "ballerina-" + runSuffix()}, {
         items: [
             {
                 feedConnectionId,
-                startDate: "2026-09-01",
-                endDate: "2026-09-02",
+                startDate: yesterday,
+                endDate: today,
                 startBalance: {amount: 250.00, creditDebitIndicator: "CREDIT"},
                 endBalance: {amount: 225.50, creditDebitIndicator: "CREDIT"},
                 statementLines: [
                     {
-                        postedDate: "2026-09-02",
+                        postedDate: today,
                         description: "Card purchase",
                         amount: 24.50,
                         creditDebitIndicator: "DEBIT",

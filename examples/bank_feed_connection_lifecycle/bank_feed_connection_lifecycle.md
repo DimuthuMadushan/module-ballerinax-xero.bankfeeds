@@ -7,8 +7,7 @@ This example connects one of a customer's bank accounts to their Xero organisati
 - A Xero app with the `bankfeeds` scope, a refresh token and a tenant ID, as described in the [setup guide](../../ballerina/README.md#setup-guide). The Bank Feeds API is only available to approved Xero financial services partners.
 - Push the connector to the local repository:
   ```bash
-  cd ../../ballerina
-  bal pack && bal push --repository=local
+  (cd ../../ballerina && bal pack && bal push --repository=local)
   ```
 - Create a `Config.toml` in this directory:
   ```toml

@@ -1,6 +1,6 @@
 _Author_: @DimuthuMadushan \
 _Created_: 2026/09/28 \
-_Updated_: 2026/09/28 \
+_Updated_: 2026/10/05 \
 _Edition_: Swan Lake
 
 # Sanitation for OpenAPI specification
@@ -9,7 +9,7 @@ This document records the sanitation done on top of the official OpenAPI specifi
 The OpenAPI specification is obtained from the [Xero Bank Feeds API 19.0.0 specification](https://github.com/wso2/api-specs/blob/main/openapi/xero/bankfeeds/19.0.0/openapi.yaml) (`openapi/xero/bankfeeds/19.0.0/openapi.yaml` in `api-specs`), which is Xero's own `xero_bankfeeds.yaml` from [XeroAPI/Xero-OpenAPI](https://github.com/XeroAPI/Xero-OpenAPI).
 These changes are done in order to improve the overall usability, and as workarounds for some known language limitations.
 
-Items 1 and 3 to 7 are applied directly to `docs/spec/openapi.yaml`, so they survive every regeneration. Item 2 is a note on how the aligned YAML is converted to JSON, and item 8 is recorded in `ai-mappings.json`. Apart from the `NO` quoting in item 1, `flatten` and `align` made no structural changes to this specification: no server URL, path prefix, format, nullability or type changes.
+Items 1, 3 to 7 and 9 are applied directly to `docs/spec/openapi.yaml`, so they survive every regeneration. Item 2 is a note on how the aligned YAML is converted to JSON, and item 8 is recorded in `ai-mappings.json`. Apart from the `NO` quoting in item 1, `flatten` and `align` made no structural changes to this specification: no server URL, path prefix, format, nullability or type changes.
 
 1. **Quoted the `NO` (Norway) value of the `CountryCode` enum**
    **Original**: The `CountryCode` enum lists Norway as an unquoted `- NO`. YAML 1.1 reads an unquoted `NO` as the boolean `false`, and `bal openapi flatten` wrote it to the flattened specification as the string `"false"`.
@@ -50,6 +50,11 @@ Items 1 and 3 to 7 are applied directly to `docs/spec/openapi.yaml`, so they sur
    **Original**: 7 operationIds and 13 schema names.
    **Updated**: No change. The decisions are recorded as identity mappings in `ai-mappings.json`.
    **Reason**: The operationIds are the remote method names that `ballerinax/xero.bankfeeds` 1.x published, so keeping them keeps every 1.x method name.
+
+9. **Made the statement response examples numeric**
+   **Original**: The `GET /Statements` and `GET /Statements/{statementId}` response examples gave `statementLineCount` as `"1"` and the `startBalance` and `endBalance` amounts as `"100.0000"` and `"150.0000"`, all strings.
+   **Updated**: The three statement examples give `statementLineCount: 1` and the balance amounts as the numbers `100.0000` and `150.0000`.
+   **Reason**: The schema types `statementLineCount` as an integer and the balance amounts as numbers, generated as `int` and `decimal`, so the string examples contradicted the types they document.
 
 The connector uses remote methods (`--client-methods remote`), as 1.x did.
 

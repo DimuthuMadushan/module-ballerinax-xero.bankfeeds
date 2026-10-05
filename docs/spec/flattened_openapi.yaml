@@ -301,12 +301,12 @@ paths:
                   startDate: 2019-08-01
                   endDate: 2019-08-15
                   startBalance:
-                    amount: "100.0000"
+                    amount: 100.0000
                     creditDebitIndicator: CREDIT
                   endBalance:
-                    amount: "150.0000"
+                    amount: 150.0000
                     creditDebitIndicator: CREDIT
-                  statementLineCount: "1"
+                  statementLineCount: 1
                   errors:
                   - type: duplicate-statement
                     title: Duplicate Statement Received
@@ -318,12 +318,12 @@ paths:
                   startDate: 2019-08-01
                   endDate: 2019-08-15
                   startBalance:
-                    amount: "100.0000"
+                    amount: 100.0000
                     creditDebitIndicator: CREDIT
                   endBalance:
-                    amount: "150.0000"
+                    amount: 150.0000
                     creditDebitIndicator: CREDIT
-                  statementLineCount: "1"
+                  statementLineCount: 1
         "400":
           description: bad input parameter
           content:
@@ -519,12 +519,12 @@ paths:
                 startDate: 2019-08-11
                 endDate: 2019-10-11
                 startBalance:
-                  amount: "100.0000"
+                  amount: 100.0000
                   creditDebitIndicator: CREDIT
                 endBalance:
-                  amount: "150.0000"
+                  amount: 150.0000
                   creditDebitIndicator: CREDIT
-                statementLineCount: "1"
+                statementLineCount: 1
         "404":
           description: Statement not found
       security:
